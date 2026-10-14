@@ -23,19 +23,20 @@ def get_database_url() -> str:
 
 def get_engine(db_url: str | None = None, echo: bool = False) -> AsyncEngine:
     """Get or create singleton async SQLAlchemy engine."""
-    global _engine
-    if _engine is None or db_url is not None:
+    global _engine, _session_factory
+    if _engine is None or (db_url is not None and str(_engine.url) != db_url):
         url = db_url or get_database_url()
         is_sqlite = url.startswith("sqlite")
 
         engine_kwargs = {"echo": echo}
         if is_sqlite:
             engine_kwargs["connect_args"] = {"check_same_thread": False}
+            if ":memory:" in url or url.endswith("://"):
+                from sqlalchemy.pool import StaticPool
+                engine_kwargs["poolclass"] = StaticPool
 
-        eng = create_async_engine(url, **engine_kwargs)
-        if db_url is None:
-            _engine = eng
-        return eng
+        _engine = create_async_engine(url, **engine_kwargs)
+        _session_factory = None
     return _engine
 
 

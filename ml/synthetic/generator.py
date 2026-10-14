@@ -150,14 +150,14 @@ class AMLUniverseGenerator:
         scenario_start = self.base_time + timedelta(days=5, hours=8)
 
         # 1. Target Customer Profile & Accounts
-        sandglass_cust = {
-            "customer_id": "cust_sandglass_01",
-            "customer_type": CustomerTypeEnum.BUSINESS,
-            "legal_name": "Sandglass Logistics Ltd",
-            "jurisdiction": "GB",
-            "risk_tier": RiskTierEnum.MEDIUM,
-            "declared_monthly_turnover": Decimal("50000.00"),
-            "parties": [
+        sandglass_cust = CustomerProfileIn(
+            customer_id="cust_sandglass_01",
+            customer_type=CustomerTypeEnum.BUSINESS,
+            legal_name="Sandglass Logistics Ltd",
+            jurisdiction="GB",
+            risk_tier=RiskTierEnum.MEDIUM,
+            declared_monthly_turnover=Decimal("50000.00"),
+            parties=[
                 PartyIn(
                     party_id="party_viktor_01",
                     kind=CustomerTypeEnum.INDIVIDUAL,
@@ -177,7 +177,7 @@ class AMLUniverseGenerator:
                     risk_tier=RiskTierEnum.LOW,
                 ),
             ],
-            "beneficial_owners": [
+            beneficial_owners=[
                 BeneficialOwner(
                     party_id="party_viktor_01",
                     ownership_pct=Decimal("45.00"),
@@ -194,9 +194,9 @@ class AMLUniverseGenerator:
                 ),
             ],
             # Shared device token connecting Viktor Vance and funnel mules
-            "device_tokens": ["dev_tok_sandglass_core", "dev_shared_mule_7f90c"],
-            "ip_addresses": ["198.51.100.42", "198.51.100.88"],
-        }
+            device_tokens=["dev_tok_sandglass_core", "dev_shared_mule_7f90c"],
+            ip_addresses=["198.51.100.42", "198.51.100.88"],
+        )
 
         sandglass_accounts = [
             {

@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,6 +40,7 @@ router = APIRouter(prefix="/api/v1/ingest", tags=["Ingestion & Intake"])
 )
 async def post_transaction(
     payload: TransactionIn,
+    response: Response,
     tenant_id: str = Depends(get_tenant_id),
     idempotency_key_header: str | None = Depends(get_idempotency_key),
     session: AsyncSession = Depends(get_db_session),
@@ -56,6 +57,7 @@ async def post_transaction(
     existing_outbox = result.scalar_one_or_none()
 
     if existing_outbox:
+        response.status_code = status.HTTP_200_OK
         return {
             "status": "duplicate_idempotent",
             "message": "Transaction already accepted and processed.",
